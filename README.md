@@ -60,6 +60,36 @@ Una aplicación Next.js que te permite gestionar tu repositorio de GitHub como s
 
 ### Conectar tu repositorio
 
+Tienes **3 opciones** para conectarte (de más fácil a manual):
+
+#### Opción 1: Auto-reconexión (más fácil) ⚡
+
+Una vez que te conectes la primera vez, tus credenciales se guardan en el navegador y **se reconecta automáticamente** la próxima vez que abras la app. No necesitas hacer nada más.
+
+#### Opción 2: Archivo de configuración JSON 📄
+
+1. Crea un archivo `github-config.json` con este contenido:
+   ```json
+   {
+     "token": "ghp_tu_token_aqui",
+     "repository": "owner/repo"
+   }
+   ```
+
+2. En la página de inicio, haz clic en **"Cargar desde archivo JSON"**
+
+3. Selecciona tu archivo `github-config.json`
+
+4. ¡Listo! Se conectará automáticamente
+
+**Tip:** Puedes copiar el archivo `github-config.example.json` incluido en el proyecto.
+
+#### Opción 3: Conexiones recientes 🕒
+
+Después de conectarte a un repositorio, aparecerá en tu lista de **"Conexiones recientes"**. Solo haz clic en el repositorio que quieras para reconectarte instantáneamente.
+
+#### Opción 4: Manual (tradicional) ✍️
+
 1. En la página de inicio, ingresa:
    - **Token:** Tu GitHub Personal Access Token
    - **Repositorio:** Puede ser en formato `owner/repo` o la URL completa `https://github.com/owner/repo`
@@ -136,6 +166,8 @@ npm run lint
 - Nunca se envía a ningún servidor excepto la API oficial de GitHub
 - Todos los requests van directamente de tu navegador a GitHub
 - Es recomendable usar tokens con permisos mínimos necesarios
+- Si usas archivo JSON, **NO lo subas a GitHub** (está en .gitignore por defecto)
+- Las conexiones recientes solo guardan owner/repo, NO el token
 
 ## 🤝 Contribuciones
 

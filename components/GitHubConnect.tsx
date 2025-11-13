@@ -1,48 +1,95 @@
 'use client'
 
-import { useState } from 'react'
-import { Github } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Github, Upload, History, Zap } from 'lucide-react'
 
 interface GitHubConnectProps {
   onConnect: (token: string, owner: string, repoName: string) => void
+}
+
+interface SavedConnection {
+  owner: string
+  repoName: string
+  lastUsed: number
 }
 
 export default function GitHubConnect({ onConnect }: GitHubConnectProps) {
   const [token, setToken] = useState('')
   const [repoUrl, setRepoUrl] = useState('')
   const [error, setError] = useState('')
+  const [recentConnections, setRecentConnections] = useState<SavedConnection[]>([])
+  const [showJsonUpload, setShowJsonUpload] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  // Load saved token and recent connections on mount
+  useEffect(() => {
+    const savedToken = localStorage.getItem('github_token')
+    const savedRepo = localStorage.getItem('github_repo')
+    const savedConnections = localStorage.getItem('github_recent_connections')
 
-    // Parse repository URL or owner/repo format
+    if (savedToken) setToken(savedToken)
+    if (savedRepo) setRepoUrl(savedRepo)
+    if (savedConnections) {
+      setRecentConnections(JSON.parse(savedConnections))
+    }
+
+    // Auto-connect if we have both token and repo
+    if (savedToken && savedRepo) {
+      handleConnect(savedToken, savedRepo, true)
+    }
+  }, [])
+
+  const parseRepoUrl = (url: string): { owner: string; repoName: string } | null => {
     let owner = ''
     let repoName = ''
 
+    if (url.includes('github.com')) {
+      // Parse URL format: https://github.com/owner/repo
+      const urlParts = url.replace('https://github.com/', '').split('/')
+      owner = urlParts[0]
+      repoName = urlParts[1]?.replace('.git', '')
+    } else if (url.includes('/')) {
+      // Parse owner/repo format
+      const parts = url.split('/')
+      owner = parts[0]
+      repoName = parts[1]
+    } else {
+      return null
+    }
+
+    if (!owner || !repoName) return null
+    return { owner, repoName }
+  }
+
+  const saveConnection = (owner: string, repoName: string) => {
+    const connections = recentConnections.filter(
+      (c) => !(c.owner === owner && c.repoName === repoName)
+    )
+    const newConnection: SavedConnection = {
+      owner,
+      repoName,
+      lastUsed: Date.now(),
+    }
+    const updated = [newConnection, ...connections].slice(0, 5) // Keep only 5 most recent
+    setRecentConnections(updated)
+    localStorage.setItem('github_recent_connections', JSON.stringify(updated))
+  }
+
+  const handleConnect = async (tokenToUse: string, repoToUse: string, silent = false) => {
+    if (!silent) setError('')
+
+    const parsed = parseRepoUrl(repoToUse)
+    if (!parsed) {
+      if (!silent) setError('Invalid repository format')
+      return
+    }
+
+    const { owner, repoName } = parsed
+
     try {
-      if (repoUrl.includes('github.com')) {
-        // Parse URL format: https://github.com/owner/repo
-        const urlParts = repoUrl.replace('https://github.com/', '').split('/')
-        owner = urlParts[0]
-        repoName = urlParts[1]?.replace('.git', '')
-      } else if (repoUrl.includes('/')) {
-        // Parse owner/repo format
-        const parts = repoUrl.split('/')
-        owner = parts[0]
-        repoName = parts[1]
-      } else {
-        throw new Error('Invalid repository format')
-      }
-
-      if (!owner || !repoName) {
-        throw new Error('Invalid repository format')
-      }
-
       // Verify token and repository access
       const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}`, {
         headers: {
-          Authorization: `token ${token}`,
+          Authorization: `token ${tokenToUse}`,
           Accept: 'application/vnd.github.v3+json',
         },
       })
@@ -51,10 +98,56 @@ export default function GitHubConnect({ onConnect }: GitHubConnectProps) {
         throw new Error('Invalid token or repository not found')
       }
 
-      onConnect(token, owner, repoName)
+      // Save credentials to localStorage
+      localStorage.setItem('github_token', tokenToUse)
+      localStorage.setItem('github_repo', repoToUse)
+
+      // Save to recent connections
+      saveConnection(owner, repoName)
+
+      onConnect(tokenToUse, owner, repoName)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      if (!silent) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
+      }
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await handleConnect(token, repoUrl)
+  }
+
+  const handleRecentConnect = async (connection: SavedConnection) => {
+    const repoStr = `${connection.owner}/${connection.repoName}`
+    setRepoUrl(repoStr)
+    if (token) {
+      await handleConnect(token, repoStr)
+    }
+  }
+
+  const handleJsonUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = async (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string)
+
+        if (!json.token || !json.repository) {
+          setError('Invalid JSON format. Required fields: token, repository')
+          return
+        }
+
+        setToken(json.token)
+        setRepoUrl(json.repository)
+        await handleConnect(json.token, json.repository)
+      } catch (err) {
+        setError('Error parsing JSON file')
+      }
+    }
+    reader.readAsText(file)
   }
 
   return (
@@ -70,6 +163,38 @@ export default function GitHubConnect({ onConnect }: GitHubConnectProps) {
         <p className="text-center text-gray-600 mb-8">
           Connect your repository and manage it like a cloud drive
         </p>
+
+        {/* Recent Connections */}
+        {recentConnections.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+              <History className="w-4 h-4" />
+              Conexiones recientes
+            </div>
+            <div className="space-y-2">
+              {recentConnections.map((conn) => (
+                <button
+                  key={`${conn.owner}/${conn.repoName}`}
+                  onClick={() => handleRecentConnect(conn)}
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-900">
+                      {conn.owner}/{conn.repoName}
+                    </span>
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {new Date(conn.lastUsed).toLocaleDateString()}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 text-center">
+              <span className="text-xs text-gray-500">o conecta a un nuevo repositorio:</span>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -127,9 +252,40 @@ export default function GitHubConnect({ onConnect }: GitHubConnectProps) {
           </button>
         </form>
 
+        {/* JSON Upload Option */}
+        <div className="mt-4">
+          <button
+            onClick={() => setShowJsonUpload(!showJsonUpload)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+          >
+            <Upload className="w-4 h-4" />
+            Cargar desde archivo JSON
+          </button>
+
+          {showJsonUpload && (
+            <div className="mt-3 p-4 bg-gray-50 rounded-lg">
+              <p className="text-xs text-gray-600 mb-2">
+                Sube un archivo <code className="bg-white px-1 py-0.5 rounded">github-config.json</code> con este formato:
+              </p>
+              <pre className="text-xs bg-white p-2 rounded mb-3 overflow-x-auto">
+{`{
+  "token": "ghp_xxxxx",
+  "repository": "owner/repo"
+}`}
+              </pre>
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleJsonUpload}
+                className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+          )}
+        </div>
+
         <div className="mt-6 pt-6 border-t border-gray-200">
           <p className="text-xs text-gray-500 text-center">
-            Your token is stored locally and never sent to any server except GitHub API
+            Tu token se guarda localmente en tu navegador y solo se envía a la API de GitHub
           </p>
         </div>
       </div>
