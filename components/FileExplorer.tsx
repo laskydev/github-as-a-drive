@@ -12,6 +12,11 @@ import {
   ChevronRight,
   Home,
   Plus,
+  LayoutGrid,
+  List,
+  FileVideo,
+  FileArchive,
+  Music,
 } from 'lucide-react'
 import { Octokit } from '@octokit/rest'
 
@@ -42,6 +47,7 @@ export default function FileExplorer({
   const [uploading, setUploading] = useState(false)
   const [showNewFileModal, setShowNewFileModal] = useState(false)
   const [newFileName, setNewFileName] = useState('')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   const octokit = new Octokit({ auth: token })
 
@@ -156,13 +162,80 @@ export default function FileExplorer({
   const getFileIcon = (fileName: string) => {
     const ext = fileName.split('.').pop()?.toLowerCase()
 
-    if (['md', 'txt'].includes(ext || '')) return <FileText className="w-5 h-5 text-blue-500" />
-    if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext || ''))
+    if (['md', 'txt', 'doc', 'docx', 'pdf'].includes(ext || ''))
+      return <FileText className="w-5 h-5 text-blue-500" />
+    if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'ico', 'bmp'].includes(ext || ''))
       return <ImageIcon className="w-5 h-5 text-green-500" />
-    if (['js', 'ts', 'jsx', 'tsx', 'json', 'html', 'css'].includes(ext || ''))
+    if (['js', 'ts', 'jsx', 'tsx', 'json', 'html', 'css', 'py', 'java', 'cpp', 'c', 'go', 'rs', 'php'].includes(ext || ''))
       return <FileCode className="w-5 h-5 text-purple-500" />
+    if (['mp4', 'mov', 'avi', 'mkv', 'webm'].includes(ext || ''))
+      return <FileVideo className="w-5 h-5 text-pink-500" />
+    if (['zip', 'rar', 'tar', 'gz', '7z'].includes(ext || ''))
+      return <FileArchive className="w-5 h-5 text-orange-500" />
+    if (['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(ext || ''))
+      return <Music className="w-5 h-5 text-red-500" />
 
-    return <File className="w-5 h-5 text-gray-500" />
+    return <File className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+  }
+
+  const getFileStyle = (fileName: string) => {
+    const ext = fileName.split('.').pop()?.toLowerCase()
+
+    if (['md', 'txt', 'doc', 'docx', 'pdf'].includes(ext || '')) {
+      return {
+        icon: <FileText className="w-12 h-12" />,
+        bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+        textColor: 'text-blue-600 dark:text-blue-400',
+        borderColor: 'border-blue-200 dark:border-blue-800'
+      }
+    }
+    if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'ico', 'bmp'].includes(ext || '')) {
+      return {
+        icon: <ImageIcon className="w-12 h-12" />,
+        bgColor: 'bg-green-100 dark:bg-green-900/30',
+        textColor: 'text-green-600 dark:text-green-400',
+        borderColor: 'border-green-200 dark:border-green-800'
+      }
+    }
+    if (['js', 'ts', 'jsx', 'tsx', 'json', 'html', 'css', 'py', 'java', 'cpp', 'c', 'go', 'rs', 'php'].includes(ext || '')) {
+      return {
+        icon: <FileCode className="w-12 h-12" />,
+        bgColor: 'bg-purple-100 dark:bg-purple-900/30',
+        textColor: 'text-purple-600 dark:text-purple-400',
+        borderColor: 'border-purple-200 dark:border-purple-800'
+      }
+    }
+    if (['mp4', 'mov', 'avi', 'mkv', 'webm'].includes(ext || '')) {
+      return {
+        icon: <FileVideo className="w-12 h-12" />,
+        bgColor: 'bg-pink-100 dark:bg-pink-900/30',
+        textColor: 'text-pink-600 dark:text-pink-400',
+        borderColor: 'border-pink-200 dark:border-pink-800'
+      }
+    }
+    if (['zip', 'rar', 'tar', 'gz', '7z'].includes(ext || '')) {
+      return {
+        icon: <FileArchive className="w-12 h-12" />,
+        bgColor: 'bg-orange-100 dark:bg-orange-900/30',
+        textColor: 'text-orange-600 dark:text-orange-400',
+        borderColor: 'border-orange-200 dark:border-orange-800'
+      }
+    }
+    if (['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(ext || '')) {
+      return {
+        icon: <Music className="w-12 h-12" />,
+        bgColor: 'bg-red-100 dark:bg-red-900/30',
+        textColor: 'text-red-600 dark:text-red-400',
+        borderColor: 'border-red-200 dark:border-red-800'
+      }
+    }
+
+    return {
+      icon: <File className="w-12 h-12" />,
+      bgColor: 'bg-gray-100 dark:bg-gray-700',
+      textColor: 'text-gray-600 dark:text-gray-400',
+      borderColor: 'border-gray-200 dark:border-gray-600'
+    }
   }
 
   const pathSegments = currentPath.split('/').filter(Boolean)
@@ -203,6 +276,32 @@ export default function FileExplorer({
             <Plus className="w-4 h-4" />
             New Markdown File
           </button>
+
+          {/* View Mode Toggle */}
+          <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+              }`}
+              title="Vista mosaicos"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+              }`}
+              title="Vista lista"
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -241,13 +340,48 @@ export default function FileExplorer({
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             This folder is empty. Upload some files or create a new document!
           </div>
+        ) : viewMode === 'grid' ? (
+          /* Grid View */
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {files.map((item) => {
+              const style = item.type === 'dir'
+                ? {
+                    icon: <Folder className="w-12 h-12" />,
+                    bgColor: 'bg-yellow-100 dark:bg-yellow-900/30',
+                    textColor: 'text-yellow-600 dark:text-yellow-400',
+                    borderColor: 'border-yellow-200 dark:border-yellow-800'
+                  }
+                : getFileStyle(item.name)
+
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => handleItemClick(item)}
+                  className={`flex flex-col items-center p-4 rounded-xl border-2 ${style.borderColor} ${style.bgColor} hover:shadow-md transition-all text-center group`}
+                >
+                  <div className={`${style.textColor} mb-3`}>
+                    {style.icon}
+                  </div>
+                  <p className={`text-sm font-medium ${style.textColor} truncate w-full px-2`}>
+                    {item.name}
+                  </p>
+                  {item.size !== undefined && item.type === 'file' && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {(item.size / 1024).toFixed(1)} KB
+                    </p>
+                  )}
+                </button>
+              )
+            })}
+          </div>
         ) : (
+          /* List View */
           <div className="space-y-1">
             {files.map((item) => (
               <button
                 key={item.path}
                 onClick={() => handleItemClick(item)}
-                className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700 rounded-lg transition-colors text-left"
+                className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors text-left"
               >
                 {item.type === 'dir' ? (
                   <Folder className="w-5 h-5 text-yellow-500" />
@@ -259,7 +393,7 @@ export default function FileExplorer({
                     {item.name}
                   </p>
                   {item.size !== undefined && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {(item.size / 1024).toFixed(1)} KB
                     </p>
                   )}
