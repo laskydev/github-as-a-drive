@@ -58,7 +58,13 @@ Una aplicación Next.js que te permite gestionar tu repositorio de GitHub como s
 
 ## 🔑 Configuración
 
-### Paso 1: Crear una GitHub OAuth App
+Tienes **2 opciones** para autenticarte:
+
+### Opción A: GitHub OAuth (Recomendada) 🌟
+
+La forma más profesional y segura. Ideal si quieres la mejor experiencia de usuario.
+
+#### Paso 1: Crear una GitHub OAuth App
 
 1. Ve a **GitHub Settings** → **Developer settings** → **OAuth Apps**
 2. O usa este link directo: https://github.com/settings/developers
@@ -71,7 +77,7 @@ Una aplicación Next.js que te permite gestionar tu repositorio de GitHub como s
 6. Copia el **Client ID** que aparece
 7. Haz clic en **"Generate a new client secret"** y cópialo también
 
-### Paso 2: Configurar variables de entorno
+#### Paso 2: Configurar variables de entorno
 
 1. Copia el archivo `.env.example` a `.env.local`:
    ```bash
@@ -91,7 +97,7 @@ Una aplicación Next.js que te permite gestionar tu repositorio de GitHub como s
    openssl rand -base64 32
    ```
 
-### Paso 3: Usar la aplicación
+#### Paso 3: Usar la aplicación
 
 1. **Primera vez:**
    - Haz clic en **"Iniciar sesión con GitHub"**
@@ -102,6 +108,38 @@ Una aplicación Next.js que te permite gestionar tu repositorio de GitHub como s
 2. **Siguientes veces:**
    - La sesión se mantiene activa
    - Si cierras sesión, simplemente vuelve a hacer login con GitHub
+
+---
+
+### Opción B: Personal Access Token (Alternativa rápida) ⚡
+
+Si quieres empezar a usar la app **inmediatamente** sin configurar OAuth, usa esta opción.
+
+#### Paso 1: Crear un Personal Access Token
+
+1. Ve a: https://github.com/settings/tokens/new?scopes=repo
+2. Dale un nombre (ej: "GitHub Drive")
+3. Selecciona el scope **`repo`** (acceso a repositorios)
+4. Haz clic en "Generate token"
+5. **Copia el token** (solo se muestra una vez)
+
+#### Paso 2: Usar la aplicación
+
+1. Ejecuta `npm run dev` y abre http://localhost:3000
+2. En la pantalla de login, haz clic en **"O usa un Personal Access Token (método alternativo)"**
+3. Ingresa tu token y el repositorio (formato: `owner/repo`)
+4. Haz clic en "Connect Repository"
+
+**Ventajas:**
+- ✅ No requiere configuración de OAuth App
+- ✅ Empiezas a usar la app en menos de 1 minuto
+- ✅ Funciona sin variables de entorno
+
+**Desventajas:**
+- ❌ Tienes que copiar/pegar el token manualmente
+- ❌ No hay selector visual de repositorios
+
+---
 
 ## 📖 Uso
 

@@ -18,9 +18,10 @@ interface Repository {
 
 interface GitHubOAuthProps {
   onConnect: (token: string, owner: string, repoName: string) => void
+  onSwitchToManual?: () => void
 }
 
-export default function GitHubOAuth({ onConnect }: GitHubOAuthProps) {
+export default function GitHubOAuth({ onConnect, onSwitchToManual }: GitHubOAuthProps) {
   const { data: session, status } = useSession()
   const [repositories, setRepositories] = useState<Repository[]>([])
   const [filteredRepos, setFilteredRepos] = useState<Repository[]>([])
@@ -118,10 +119,18 @@ export default function GitHubOAuth({ onConnect }: GitHubOAuthProps) {
           </div>
 
           <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs text-blue-800">
+            <p className="text-xs text-blue-800 mb-2">
               <strong>¿Primera vez?</strong> Necesitarás configurar una GitHub OAuth App.
               Lee las instrucciones en el README.
             </p>
+            {onSwitchToManual && (
+              <button
+                onClick={onSwitchToManual}
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
+              >
+                O usa un Personal Access Token (método alternativo)
+              </button>
+            )}
           </div>
         </div>
       </div>

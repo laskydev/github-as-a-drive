@@ -4,12 +4,14 @@ import { useState } from 'react'
 import FileExplorer from '@/components/FileExplorer'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import GitHubOAuth from '@/components/GitHubOAuth'
+import GitHubConnect from '@/components/GitHubConnect'
 
 export default function Home() {
   const [token, setToken] = useState<string>('')
   const [repo, setRepo] = useState<{ owner: string; name: string } | null>(null)
   const [currentFile, setCurrentFile] = useState<string | null>(null)
   const [view, setView] = useState<'explorer' | 'editor'>('explorer')
+  const [authMode, setAuthMode] = useState<'oauth' | 'manual'>('oauth')
 
   const handleConnect = (newToken: string, repoOwner: string, repoName: string) => {
     setToken(newToken)
@@ -27,7 +29,21 @@ export default function Home() {
   }
 
   if (!token || !repo) {
-    return <GitHubOAuth onConnect={handleConnect} />
+    if (authMode === 'oauth') {
+      return (
+        <GitHubOAuth
+          onConnect={handleConnect}
+          onSwitchToManual={() => setAuthMode('manual')}
+        />
+      )
+    } else {
+      return (
+        <GitHubConnect
+          onConnect={handleConnect}
+          onSwitchToOAuth={() => setAuthMode('oauth')}
+        />
+      )
+    }
   }
 
   return (

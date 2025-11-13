@@ -5,6 +5,7 @@ import { Github, Upload, History, Zap } from 'lucide-react'
 
 interface GitHubConnectProps {
   onConnect: (token: string, owner: string, repoName: string) => void
+  onSwitchToOAuth?: () => void
 }
 
 interface SavedConnection {
@@ -13,7 +14,7 @@ interface SavedConnection {
   lastUsed: number
 }
 
-export default function GitHubConnect({ onConnect }: GitHubConnectProps) {
+export default function GitHubConnect({ onConnect, onSwitchToOAuth }: GitHubConnectProps) {
   const [token, setToken] = useState('')
   const [repoUrl, setRepoUrl] = useState('')
   const [error, setError] = useState('')
@@ -284,9 +285,19 @@ export default function GitHubConnect({ onConnect }: GitHubConnectProps) {
         </div>
 
         <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 text-center">
+          <p className="text-xs text-gray-500 text-center mb-2">
             Tu token se guarda localmente en tu navegador y solo se envía a la API de GitHub
           </p>
+          {onSwitchToOAuth && (
+            <div className="text-center">
+              <button
+                onClick={onSwitchToOAuth}
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
+              >
+                ¿Prefieres OAuth? Inicia sesión con GitHub
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
