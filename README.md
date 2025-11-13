@@ -21,7 +21,8 @@ Una aplicación Next.js que te permite gestionar tu repositorio de GitHub como s
 - Detección automática de cambios sin guardar
 
 ### 🔐 Integración con GitHub
-- Autenticación mediante GitHub Personal Access Token
+- **Autenticación OAuth** - Login seguro con tu cuenta de GitHub
+- **Selector de repositorios** - Elige visualmente de tus repos
 - Commits automáticos con cada guardado
 - Control de versiones completo usando Git
 - Todos los cambios se sincronizan con tu repositorio
@@ -39,64 +40,77 @@ Una aplicación Next.js que te permite gestionar tu repositorio de GitHub como s
    npm install
    ```
 
-3. **Ejecutar en modo desarrollo:**
+3. **Configurar variables de entorno:**
+   ```bash
+   cp .env.example .env.local
+   ```
+   Luego edita `.env.local` con tus credenciales (ver sección de Configuración)
+
+4. **Ejecutar en modo desarrollo:**
    ```bash
    npm run dev
    ```
 
-4. **Abrir en el navegador:**
+5. **Abrir en el navegador:**
    ```
    http://localhost:3000
    ```
 
 ## 🔑 Configuración
 
-### Obtener un GitHub Personal Access Token
+### Paso 1: Crear una GitHub OAuth App
 
-1. Ve a GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
-2. O usa este link directo: https://github.com/settings/tokens/new?scopes=repo
-3. Crea un nuevo token con el scope **`repo`** (acceso completo a repositorios)
-4. Copia el token generado
+1. Ve a **GitHub Settings** → **Developer settings** → **OAuth Apps**
+2. O usa este link directo: https://github.com/settings/developers
+3. Haz clic en **"New OAuth App"**
+4. Completa el formulario:
+   - **Application name:** `GitHub Drive` (o el nombre que prefieras)
+   - **Homepage URL:** `http://localhost:3000`
+   - **Authorization callback URL:** `http://localhost:3000/api/auth/callback/github`
+5. Haz clic en **"Register application"**
+6. Copia el **Client ID** que aparece
+7. Haz clic en **"Generate a new client secret"** y cópialo también
 
-### Conectar tu repositorio
+### Paso 2: Configurar variables de entorno
 
-Tienes **3 opciones** para conectarte (de más fácil a manual):
-
-#### Opción 1: Auto-reconexión (más fácil) ⚡
-
-Una vez que te conectes la primera vez, tus credenciales se guardan en el navegador y **se reconecta automáticamente** la próxima vez que abras la app. No necesitas hacer nada más.
-
-#### Opción 2: Archivo de configuración JSON 📄
-
-1. Crea un archivo `github-config.json` con este contenido:
-   ```json
-   {
-     "token": "ghp_tu_token_aqui",
-     "repository": "owner/repo"
-   }
+1. Copia el archivo `.env.example` a `.env.local`:
+   ```bash
+   cp .env.example .env.local
    ```
 
-2. En la página de inicio, haz clic en **"Cargar desde archivo JSON"**
+2. Edita `.env.local` con tus credenciales:
+   ```env
+   GITHUB_CLIENT_ID=tu_client_id_aqui
+   GITHUB_CLIENT_SECRET=tu_client_secret_aqui
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=genera_uno_con_el_comando_abajo
+   ```
 
-3. Selecciona tu archivo `github-config.json`
+3. Genera un `NEXTAUTH_SECRET`:
+   ```bash
+   openssl rand -base64 32
+   ```
 
-4. ¡Listo! Se conectará automáticamente
+### Paso 3: Usar la aplicación
 
-**Tip:** Puedes copiar el archivo `github-config.example.json` incluido en el proyecto.
+1. **Primera vez:**
+   - Haz clic en **"Iniciar sesión con GitHub"**
+   - Autoriza la aplicación en GitHub
+   - Selecciona un repositorio de tu lista
+   - ¡Listo! Ya estás conectado
 
-#### Opción 3: Conexiones recientes 🕒
-
-Después de conectarte a un repositorio, aparecerá en tu lista de **"Conexiones recientes"**. Solo haz clic en el repositorio que quieras para reconectarte instantáneamente.
-
-#### Opción 4: Manual (tradicional) ✍️
-
-1. En la página de inicio, ingresa:
-   - **Token:** Tu GitHub Personal Access Token
-   - **Repositorio:** Puede ser en formato `owner/repo` o la URL completa `https://github.com/owner/repo`
-
-2. Haz clic en "Connect Repository"
+2. **Siguientes veces:**
+   - La sesión se mantiene activa
+   - Si cierras sesión, simplemente vuelve a hacer login con GitHub
 
 ## 📖 Uso
+
+### Seleccionar repositorio
+
+1. Después de iniciar sesión, verás una lista de todos tus repositorios
+2. Usa la barra de búsqueda para filtrar repositorios
+3. Haz clic en el repositorio con el que quieras trabajar
+4. La información incluye: descripción, estrellas, forks y última actualización
 
 ### Explorar archivos
 
@@ -139,6 +153,7 @@ Los archivos se subirán automáticamente al repositorio con un commit.
 - **Next.js 14** - Framework de React
 - **TypeScript** - Tipado estático
 - **Tailwind CSS** - Estilos
+- **NextAuth.js** - Autenticación OAuth
 - **Octokit** - Cliente de GitHub API
 - **react-markdown** - Renderizado de markdown
 - **react-dropzone** - Drag & drop de archivos
@@ -162,12 +177,21 @@ npm run lint
 
 ## 🔒 Seguridad
 
-- Tu token de GitHub se almacena **solo en tu navegador** (localStorage)
-- Nunca se envía a ningún servidor excepto la API oficial de GitHub
-- Todos los requests van directamente de tu navegador a GitHub
-- Es recomendable usar tokens con permisos mínimos necesarios
-- Si usas archivo JSON, **NO lo subas a GitHub** (está en .gitignore por defecto)
-- Las conexiones recientes solo guardan owner/repo, NO el token
+- Autenticación mediante **GitHub OAuth** (estándar de la industria)
+- Tu access token se maneja de forma segura mediante NextAuth.js
+- Solo solicitamos permisos de `repo` (lectura/escritura de repositorios)
+- Todos los requests van directamente de tu navegador a GitHub API
+- Las credenciales OAuth nunca se almacenan en texto plano
+- Variables de entorno protegidas por `.env.local` (no se suben a Git)
+
+## 🌐 Desplegar a producción
+
+Para desplegar en Vercel, Railway, o cualquier plataforma:
+
+1. Configura las variables de entorno en tu plataforma
+2. **Importante:** Actualiza la **Authorization callback URL** en tu GitHub OAuth App:
+   - Si es Vercel: `https://tu-dominio.vercel.app/api/auth/callback/github`
+   - Actualiza también `NEXTAUTH_URL` en las variables de entorno
 
 ## 🤝 Contribuciones
 

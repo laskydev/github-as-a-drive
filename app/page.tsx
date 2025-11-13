@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import FileExplorer from '@/components/FileExplorer'
 import MarkdownEditor from '@/components/MarkdownEditor'
-import GitHubConnect from '@/components/GitHubConnect'
+import GitHubOAuth from '@/components/GitHubOAuth'
 
 export default function Home() {
   const [token, setToken] = useState<string>('')
@@ -27,7 +27,7 @@ export default function Home() {
   }
 
   if (!token || !repo) {
-    return <GitHubConnect onConnect={handleConnect} />
+    return <GitHubOAuth onConnect={handleConnect} />
   }
 
   return (
