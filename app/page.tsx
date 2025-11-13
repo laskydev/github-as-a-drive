@@ -5,6 +5,7 @@ import FileExplorer from '@/components/FileExplorer'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import GitHubOAuth from '@/components/GitHubOAuth'
 import GitHubConnect from '@/components/GitHubConnect'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default function Home() {
   const [token, setToken] = useState<string>('')
@@ -47,22 +48,23 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-gray-900">GitHub Drive</h1>
-            <span className="text-sm text-gray-600">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">GitHub Drive</h1>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
               {repo.owner}/{repo.name}
             </span>
           </div>
           <div className="flex gap-2">
+            <ThemeToggle />
             <button
               onClick={() => setView('explorer')}
               className={`px-4 py-2 rounded-lg ${
                 view === 'explorer'
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               }`}
             >
               Explorer
@@ -73,7 +75,7 @@ export default function Home() {
                 className={`px-4 py-2 rounded-lg ${
                   view === 'editor'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
                 Editor

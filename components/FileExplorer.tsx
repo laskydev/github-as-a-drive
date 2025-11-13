@@ -168,9 +168,9 @@ export default function FileExplorer({
   const pathSegments = currentPath.split('/').filter(Boolean)
 
   return (
-    <div className="bg-white rounded-lg shadow-lg">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
       {/* Header with breadcrumbs */}
-      <div className="border-b border-gray-200 p-4">
+      <div className="border-b border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
           <button
             onClick={() => navigateToPath('')}
@@ -198,7 +198,7 @@ export default function FileExplorer({
         <div className="flex gap-2">
           <button
             onClick={() => setShowNewFileModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
           >
             <Plus className="w-4 h-4" />
             New Markdown File
@@ -211,16 +211,16 @@ export default function FileExplorer({
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg m-4 p-8 text-center cursor-pointer transition-colors ${
           isDragActive
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 hover:border-gray-400'
+            ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
+            : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
         }`}
       >
         <input {...getInputProps()} />
         <Upload className="w-12 h-12 mx-auto mb-2 text-gray-400" />
         {uploading ? (
-          <p className="text-gray-600">Uploading files...</p>
+          <p className="text-gray-600 dark:text-gray-400">Uploading files...</p>
         ) : isDragActive ? (
-          <p className="text-blue-600">Drop files here...</p>
+          <p className="text-blue-600 dark:text-blue-400">Drop files here...</p>
         ) : (
           <div>
             <p className="text-gray-600 mb-1">
@@ -236,9 +236,9 @@ export default function FileExplorer({
       {/* File list */}
       <div className="p-4">
         {loading ? (
-          <div className="text-center py-8 text-gray-500">Loading files...</div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading files...</div>
         ) : files.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             This folder is empty. Upload some files or create a new document!
           </div>
         ) : (
@@ -247,7 +247,7 @@ export default function FileExplorer({
               <button
                 key={item.path}
                 onClick={() => handleItemClick(item)}
-                className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors text-left"
+                className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700 rounded-lg transition-colors text-left"
               >
                 {item.type === 'dir' ? (
                   <Folder className="w-5 h-5 text-yellow-500" />
@@ -255,7 +255,7 @@ export default function FileExplorer({
                   getFileIcon(item.name)
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                     {item.name}
                   </p>
                   {item.size !== undefined && (
@@ -276,14 +276,14 @@ export default function FileExplorer({
       {/* New file modal */}
       {showNewFileModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Create New Markdown File</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold dark:text-white mb-4">Create New Markdown File</h3>
             <input
               type="text"
               value={newFileName}
               onChange={(e) => setNewFileName(e.target.value)}
               placeholder="document-name.md"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg mb-4"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleCreateNewFile()
@@ -299,13 +299,13 @@ export default function FileExplorer({
                   setShowNewFileModal(false)
                   setNewFileName('')
                 }}
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateNewFile}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
               >
                 Create
               </button>

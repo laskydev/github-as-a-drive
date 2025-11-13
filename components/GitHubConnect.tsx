@@ -152,23 +152,23 @@ export default function GitHubConnect({ onConnect, onSwitchToOAuth }: GitHubConn
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-md">
         <div className="flex items-center justify-center mb-6">
-          <Github className="w-16 h-16 text-gray-800" />
+          <Github className="w-16 h-16 text-gray-800 dark:text-gray-200" />
         </div>
 
-        <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">
           GitHub Drive
         </h1>
-        <p className="text-center text-gray-600 mb-8">
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
           Connect your repository and manage it like a cloud drive
         </p>
 
         {/* Recent Connections */}
         {recentConnections.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               <History className="w-4 h-4" />
               Conexiones recientes
             </div>
@@ -177,29 +177,29 @@ export default function GitHubConnect({ onConnect, onSwitchToOAuth }: GitHubConn
                 <button
                   key={`${conn.owner}/${conn.repoName}`}
                   onClick={() => handleRecentConnect(conn)}
-                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-left"
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors text-left"
                 >
                   <div className="flex items-center gap-2">
                     <Zap className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {conn.owner}/{conn.repoName}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     {new Date(conn.lastUsed).toLocaleDateString()}
                   </span>
                 </button>
               ))}
             </div>
             <div className="mt-3 text-center">
-              <span className="text-xs text-gray-500">o conecta a un nuevo repositorio:</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">o conecta a un nuevo repositorio:</span>
             </div>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="token" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="token" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               GitHub Personal Access Token
             </label>
             <input
@@ -208,10 +208,10 @@ export default function GitHubConnect({ onConnect, onSwitchToOAuth }: GitHubConn
               value={token}
               onChange={(e) => setToken(e.target.value)}
               placeholder="ghp_xxxxxxxxxxxx"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Need a token?{' '}
               <a
                 href="https://github.com/settings/tokens/new?scopes=repo"
@@ -225,7 +225,7 @@ export default function GitHubConnect({ onConnect, onSwitchToOAuth }: GitHubConn
           </div>
 
           <div>
-            <label htmlFor="repo" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="repo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Repository
             </label>
             <input
@@ -234,20 +234,20 @@ export default function GitHubConnect({ onConnect, onSwitchToOAuth }: GitHubConn
               value={repoUrl}
               onChange={(e) => setRepoUrl(e.target.value)}
               placeholder="owner/repo or https://github.com/owner/repo"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+            className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
           >
             Connect Repository
           </button>
@@ -257,16 +257,16 @@ export default function GitHubConnect({ onConnect, onSwitchToOAuth }: GitHubConn
         <div className="mt-4">
           <button
             onClick={() => setShowJsonUpload(!showJsonUpload)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
           >
             <Upload className="w-4 h-4" />
             Cargar desde archivo JSON
           </button>
 
           {showJsonUpload && (
-            <div className="mt-3 p-4 bg-gray-50 rounded-lg">
+            <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <p className="text-xs text-gray-600 mb-2">
-                Sube un archivo <code className="bg-white px-1 py-0.5 rounded">github-config.json</code> con este formato:
+                Sube un archivo <code className="bg-white dark:bg-gray-600 px-1 py-0.5 rounded">github-config.json</code> con este formato:
               </p>
               <pre className="text-xs bg-white p-2 rounded mb-3 overflow-x-auto">
 {`{
@@ -284,15 +284,15 @@ export default function GitHubConnect({ onConnect, onSwitchToOAuth }: GitHubConn
           )}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 text-center mb-2">
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-2">
             Tu token se guarda localmente en tu navegador y solo se envía a la API de GitHub
           </p>
           {onSwitchToOAuth && (
             <div className="text-center">
               <button
                 onClick={onSwitchToOAuth}
-                className="text-xs text-blue-600 hover:text-blue-800 underline"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
               >
                 ¿Prefieres OAuth? Inicia sesión con GitHub
               </button>

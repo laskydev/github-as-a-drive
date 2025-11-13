@@ -75,6 +75,11 @@ body {
   font-family: 'Courier New', monospace;
 }
 
+.dark .markdown-preview code {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
 .markdown-preview pre {
   background-color: #f4f4f4;
   padding: 1em;
@@ -84,7 +89,30 @@ body {
   margin-bottom: 1em;
 }
 
+.dark .markdown-preview pre {
+  background-color: #1f2937;
+}
+
 .markdown-preview pre code {
   background-color: transparent;
   padding: 0;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }

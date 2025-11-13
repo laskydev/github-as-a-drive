@@ -80,8 +80,8 @@ export default function GitHubOAuth({ onConnect, onSwitchToManual }: GitHubOAuth
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="flex items-center gap-3 text-gray-600">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
           <Loader2 className="w-6 h-6 animate-spin" />
           <span>Cargando...</span>
         </div>
@@ -91,42 +91,42 @@ export default function GitHubOAuth({ onConnect, onSwitchToManual }: GitHubOAuth
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-md">
           <div className="flex items-center justify-center mb-6">
-            <Github className="w-16 h-16 text-gray-800" />
+            <Github className="w-16 h-16 text-gray-800 dark:text-gray-200" />
           </div>
 
-          <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">
             GitHub Drive
           </h1>
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
             Gestiona tu repositorio como un drive en la nube
           </p>
 
           <button
             onClick={handleSignIn}
-            className="w-full flex items-center justify-center gap-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-4 rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-3 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold py-4 rounded-lg transition-colors"
           >
             <Github className="w-5 h-5" />
             Iniciar sesión con GitHub
           </button>
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center">
+          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
               OAuth seguro - Solo solicitamos permisos de lectura/escritura en repositorios
             </p>
           </div>
 
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs text-blue-800 mb-2">
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <p className="text-xs text-blue-800 dark:text-blue-300 mb-2">
               <strong>¿Primera vez?</strong> Necesitarás configurar una GitHub OAuth App.
               Lee las instrucciones en el README.
             </p>
             {onSwitchToManual && (
               <button
                 onClick={onSwitchToManual}
-                className="text-xs text-blue-600 hover:text-blue-800 underline"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
               >
                 O usa un Personal Access Token (método alternativo)
               </button>
@@ -138,24 +138,24 @@ export default function GitHubOAuth({ onConnect, onSwitchToManual }: GitHubOAuth
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-8">
       <div className="container mx-auto px-4 max-w-4xl">
-        <div className="bg-white rounded-xl shadow-2xl p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <Github className="w-10 h-10 text-gray-800" />
+              <Github className="w-10 h-10 text-gray-800 dark:text-gray-200" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                   Selecciona un repositorio
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Conectado como {session.user?.name || session.user?.email}
                 </p>
               </div>
             </div>
             <button
               onClick={() => signOut()}
-              className="text-sm text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-100"
+              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               Cerrar sesión
             </button>
@@ -164,13 +164,13 @@ export default function GitHubOAuth({ onConnect, onSwitchToManual }: GitHubOAuth
           {/* Search bar */}
           <div className="mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar repositorios..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -178,10 +178,10 @@ export default function GitHubOAuth({ onConnect, onSwitchToManual }: GitHubOAuth
           {/* Repository list */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
             </div>
           ) : filteredRepos.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               {searchQuery ? 'No se encontraron repositorios' : 'No tienes repositorios'}
             </div>
           ) : (
@@ -190,26 +190,26 @@ export default function GitHubOAuth({ onConnect, onSwitchToManual }: GitHubOAuth
                 <button
                   key={repo.id}
                   onClick={() => handleRepoSelect(repo)}
-                  className="w-full p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left group"
+                  className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left group"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                        <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {repo.full_name}
                         </h3>
                         {repo.private && (
-                          <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
+                          <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 px-2 py-0.5 rounded">
                             Privado
                           </span>
                         )}
                       </div>
                       {repo.description && (
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
                           {repo.description}
                         </p>
                       )}
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
                         <div className="flex items-center gap-1">
                           <Star className="w-3 h-3" />
                           {repo.stargazers_count}

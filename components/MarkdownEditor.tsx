@@ -142,23 +142,23 @@ export default function MarkdownEditor({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
       {/* Toolbar */}
-      <div className="border-b border-gray-200 p-4">
+      <div className="border-b border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
             </button>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               {filePath.split('/').pop()}
             </h2>
             {hasChanges && (
-              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+              <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded">
                 Unsaved changes
               </span>
             )}
@@ -167,7 +167,7 @@ export default function MarkdownEditor({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowHistory(!showHistory)}
-              className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+              className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
             >
               <Clock className="w-4 h-4" />
               History
@@ -177,7 +177,7 @@ export default function MarkdownEditor({
               disabled={!hasChanges || saving}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                 hasChanges && !saving
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-blue-600 text-white dark:bg-blue-600 hover:bg-blue-700'
                   : 'bg-gray-200 text-gray-500 cursor-not-allowed'
               }`}
             >
@@ -193,8 +193,8 @@ export default function MarkdownEditor({
             onClick={() => setViewMode('edit')}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
               viewMode === 'edit'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-blue-600 text-white dark:bg-blue-600'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
             <Code className="w-4 h-4" />
@@ -204,8 +204,8 @@ export default function MarkdownEditor({
             onClick={() => setViewMode('split')}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
               viewMode === 'split'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-blue-600 text-white dark:bg-blue-600'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
             Split
@@ -214,8 +214,8 @@ export default function MarkdownEditor({
             onClick={() => setViewMode('preview')}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
               viewMode === 'preview'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-blue-600 text-white dark:bg-blue-600'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
             <Eye className="w-4 h-4" />
@@ -236,7 +236,7 @@ export default function MarkdownEditor({
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none"
+              className="w-full h-full p-4 font-mono text-sm resize-none focus:outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
               placeholder="Start writing your markdown here..."
             />
           </div>
@@ -260,7 +260,7 @@ export default function MarkdownEditor({
 
       {/* Commit history sidebar */}
       {showHistory && (
-        <div className="fixed right-0 top-0 h-full w-80 bg-white border-l border-gray-200 shadow-xl overflow-y-auto z-50">
+        <div className="fixed right-0 top-0 h-full w-80 bg-white border-l border-gray-200 dark:border-gray-700 dark:bg-gray-800 shadow-xl overflow-y-auto z-50">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Commit History</h3>
@@ -280,22 +280,22 @@ export default function MarkdownEditor({
                 {commits.map((commit) => (
                   <div
                     key={commit.sha}
-                    className="border border-gray-200 rounded-lg p-3"
+                    className="border border-gray-200 dark:border-gray-700 dark:bg-gray-700 rounded-lg p-3"
                   >
                     <div className="flex items-start gap-2 mb-2">
-                      <GitCommit className="w-4 h-4 text-gray-400 mt-1" />
+                      <GitCommit className="w-4 h-4 text-gray-400 dark:text-gray-500 mt-1" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 break-words">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white break-words">
                           {commit.message}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                           {commit.author}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                       <span>{commit.date}</span>
-                      <code className="bg-gray-100 px-2 py-1 rounded">
+                      <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
                         {commit.sha}
                       </code>
                     </div>
@@ -309,7 +309,7 @@ export default function MarkdownEditor({
 
       {/* Commit dialog */}
       {showCommitDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black dark:bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">Commit Changes</h3>
             <p className="text-sm text-gray-600 mb-4">
@@ -320,7 +320,7 @@ export default function MarkdownEditor({
               value={commitMessage}
               onChange={(e) => setCommitMessage(e.target.value)}
               placeholder="Update document content"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg mb-4"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter') confirmSave()
@@ -336,7 +336,7 @@ export default function MarkdownEditor({
                   setShowCommitDialog(false)
                   setCommitMessage('')
                 }}
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                 disabled={saving}
               >
                 Cancel
@@ -344,7 +344,7 @@ export default function MarkdownEditor({
               <button
                 onClick={confirmSave}
                 disabled={!commitMessage || saving}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
+                className="px-4 py-2 bg-blue-600 text-white dark:bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
               >
                 {saving ? 'Saving...' : 'Commit'}
               </button>
