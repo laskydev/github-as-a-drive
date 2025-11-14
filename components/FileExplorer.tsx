@@ -17,6 +17,7 @@ import {
   FileVideo,
   FileArchive,
   Music,
+  FolderUp,
 } from 'lucide-react'
 import { Octokit } from '@octokit/rest'
 
@@ -111,17 +112,17 @@ export default function FileExplorer({
             const content = e.target?.result as string
             const base64Content = content.split(',')[1]
 
-            const filePath = currentPath ? `${currentPath}/${file.name}` : file.name
+            // Use webkitRelativePath if available (for folder uploads), otherwise just filename
+            const relativePath = (file as any).webkitRelativePath || file.name
+            const filePath = currentPath ? `${currentPath}/${relativePath}` : relativePath
 
             await octokit.repos.createOrUpdateFileContents({
               owner,
               repo: repoName,
               path: filePath,
-              message: `Upload ${file.name}`,
+              message: `Upload ${relativePath}`,
               content: base64Content,
             })
-
-            await loadFiles(currentPath)
           }
           reader.readAsDataURL(file)
         } catch (error) {
@@ -129,12 +130,57 @@ export default function FileExplorer({
         }
       }
 
-      setUploading(false)
+      // Wait a bit before reloading to ensure all files are uploaded
+      setTimeout(async () => {
+        await loadFiles(currentPath)
+        setUploading(false)
+      }, 1000)
     },
     [currentPath, token, owner, repoName]
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+
+  const handleFolderUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+
+    const fileArray = Array.from(files)
+    for (const file of fileArray) {
+      try {
+        const reader = new FileReader()
+        reader.onload = async (event) => {
+          const content = event.target?.result as string
+          const base64Content = content.split(',')[1]
+
+          // Use webkitRelativePath to maintain folder structure
+          const relativePath = (file as any).webkitRelativePath || file.name
+          const filePath = currentPath ? `${currentPath}/${relativePath}` : relativePath
+
+          await octokit.repos.createOrUpdateFileContents({
+            owner,
+            repo: repoName,
+            path: filePath,
+            message: `Upload ${relativePath}`,
+            content: base64Content,
+          })
+        }
+        reader.readAsDataURL(file)
+      } catch (error) {
+        console.error('Error uploading file:', error)
+      }
+    }
+
+    // Wait a bit before reloading to ensure all files are uploaded
+    setTimeout(async () => {
+      await loadFiles(currentPath)
+      setUploading(false)
+      // Reset input
+      e.target.value = ''
+    }, 1500)
+  }
 
   const handleCreateNewFile = async () => {
     if (!newFileName) return
@@ -276,6 +322,19 @@ export default function FileExplorer({
             <Plus className="w-4 h-4" />
             New Markdown File
           </button>
+
+          {/* Upload Folder Button */}
+          <label className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 cursor-pointer">
+            <FolderUp className="w-4 h-4" />
+            Upload Folder
+            <input
+              type="file"
+              onChange={handleFolderUpload}
+              className="hidden"
+              {...({ webkitdirectory: '', directory: '' } as any)}
+              multiple
+            />
+          </label>
 
           {/* View Mode Toggle */}
           <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
